@@ -52,5 +52,13 @@ def reader_function(paths):
                             f"S{scene_index:02d} {channel_name}"
                             for channel_name in f.channel_names
                         ]
+                if f.channel_colors is not None:
+                    if num_scenes == 1:
+                        metadata["colormap"] = f.channel_colors
+                    elif num_scenes > 1:
+                        metadata["colormap"] = [
+                            f"S{scene_index:02d} {channel_color}"
+                            for channel_color in f.channel_colors
+                        ]                        
             layer_data.append((data, metadata, "image"))
     return layer_data
