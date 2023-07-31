@@ -70,6 +70,23 @@ class CZISceneFile(CziFile):
         return None
 
     @lazyattr
+    def channel_colors(self) -> Optional[List[str]]:
+        if "C" in self.axes:
+            channel_elements = self._metadata_xml.findall(
+                ".//Metadata/Information/Image/Dimensions/Channels/Channel"
+            )
+            if len(channel_elements) == self.shape[self.axes.index("C")]:
+                cols = []
+                for c in channel_elements:
+                    col = c.find('Color') 
+                    if col is not None and len(col.text) > 3:
+                        # Remove the ff from #ffRRGGBB color value. Is that an alpha? What is it?
+                        col = '#'+col.text[3:]
+                    cols.append(col)
+                return cols
+        return None
+    
+    @lazyattr
     def is_rgb(self) -> bool:
         return "0" in self.axes and self.shape[self.axes.index("0")] > 1
 
